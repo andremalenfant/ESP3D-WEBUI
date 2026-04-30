@@ -384,16 +384,55 @@ w25 {
 
 @media (min-width: 801px) and (max-width: 1600px) {
     .grid-container {
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 100%;
+   
     }
 }
 
-@media (min-width: 1601px) and (max-width: 2400px) {
+@media (min-width: 1601px) and (max-width: 1920px) {
     .grid-container {
-        grid-template-columns: 33% 34% 33%;
+        /*grid-template-columns: auto auto 15%;*/
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px; 
     }
+
+    .panel-flex-col:first-child {
+        grid-column: 1 / span 3;
+    }
+
+    .panel-flex-col:nth-child(2) {
+        grid-column-start: 4;
+    }
+
+    .panel-flex-col:nth-child(n + 3) {
+        grid-row-start: 2;
+    }    
 }
 
+@media (min-width: 1921px) /*and (max-width: 2400px) */{
+    .grid-container {
+        /*grid-template-columns: auto auto 15%;*/
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px; 
+    }
+
+    .panel-flex-col:first-child {
+        grid-column: 1 / span 5;
+    }
+
+    .panel-flex-col:nth-child(2) {
+        grid-column-start: 6;
+    }
+
+    .panel-flex-col:nth-child(n + 3) {
+        grid-row-start: 2;
+    }      
+}
+/*
 @media (min-width: 2401px) and (max-width: 3200px) {
     .grid-container {
         grid-template-columns: 25% 25% 25% 25%;
@@ -405,7 +444,7 @@ w25 {
         grid-template-columns: 20% 20% 20% 20% 20%;
     }
 }
-
+*/
 @media (min-width: 1600px) {
     .fixedbutton {
         width: 6em !important;
@@ -439,3 +478,5 @@ w25 {
 }
 
 .button_txt {}
+
+

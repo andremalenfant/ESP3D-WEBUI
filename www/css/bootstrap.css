@@ -1699,7 +1699,7 @@ pre code {
     .col-lg-10,
     .col-lg-11,
     .col-lg-12 {
-        float: left;
+        float: none;
     }
 
     .col-lg-12 {
