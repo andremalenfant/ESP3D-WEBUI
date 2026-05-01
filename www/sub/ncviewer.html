@@ -36,8 +36,8 @@
     </main>
 </div>
 
+<!--
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
-
 <script type="inline-module-importmap">
     {
         "imports": {
@@ -47,9 +47,9 @@
         }
     }
 </script>
+-->
 
-<!--
-<script src="/SD/interface/loader.js"></script>
+<script src="/SD%2Finterface%2Floader.js"></script>
 
 <script type="inline-module-importmap">
     {
@@ -60,7 +60,7 @@
         }
     }
 </script>
--->
+
 
 <script type="inline-module" id="ncviewermodule">
 
@@ -74,7 +74,8 @@
     import {
         OrbitControls
     }
-    from "three/addons/controls/OrbitControls.js";
+    from "orbit";
+    //from "three/addons/controls/OrbitControls.js";
         
     const viewer = document.getElementById('viewer');
     const scene = new THREE.Scene();
@@ -299,7 +300,8 @@
 
 
     export function loadFileFromFluidNC(url) {
-        fetch(encodeURIComponent(url.replace("//", "/")))
+        url = "/" + encodeURIComponent(url)
+        fetch(url.replace("//", "/"))
         .then(response => {
             if (!response.ok) {
                 throw new Error("HTTP error " + response.status);
@@ -641,7 +643,6 @@
     startMarker.visible = false;
     endMarker.visible = false;
 
-    /*
     function updateColorsForTheme(isLight) {
         if (isLight) {
             colors.selectedColor = 0x000000;
@@ -658,24 +659,25 @@
 
     function applyTheme(isLight) {
         //toggleTheme.checked = isLight;
-        document.body.classList.toggle('dark', !isLight);
-        document.body.classList.toggle('light', isLight);
+        //document.body.classList.toggle('dark', !isLight);
+        //document.body.classList.toggle('light', isLight);
         setViewerBackground();
         updateColorsForTheme(!isLight);
 
         startMarker.material.color.set(colors.selectedColor);
         endMarker.material.color.set(colors.selectedColor);
 
-        if (monacoEditor) {
+        /*if (monacoEditor) {
             monaco.editor.setTheme(isLight ? 'vs-dark' : 'vs-light');
-        }
+        }*/
     }
 
-    const savedTheme = localStorage.getItem('theme');
-    const isLight =  savedTheme ? savedTheme === 'light' : toggleTheme.checked;
+    //onst savedTheme = localStorage.getItem('theme');
+    //const isLight =  savedTheme ? savedTheme === 'light' : toggleTheme.checked;
+    const isLight = true;
 
     applyTheme(isLight);
-    */
+    
     
     function animate() {
         requestAnimationFrame(animate);
@@ -700,8 +702,8 @@
                     const fileName = el.textContent;
                     if (fileName.endsWith(".nc")) {
                         let path = document.querySelector('#files_currentPath').textContent;
-                        var url = "/SD/" + path + "/" + fileName;  
-                        document.loadFileFromFluidNC(url.replace("//", "/"));
+                        var url = "SD/" + path + "/" + fileName;  
+                        document.loadFileFromFluidNC(url);
                     }
                 });
                 el.attached = true;
