@@ -1,4 +1,4 @@
-import gulp from 'gulp';
+import gulp, { series } from 'gulp';
 import jshint from 'gulp-jshint';
 import concat from 'gulp-concat';
 import uglify from 'gulp-uglify';
@@ -13,6 +13,8 @@ import fs from 'fs';
 import smoosher from 'gulp-smoosher';
 import size from 'gulp-size';
 import childProcess from 'child_process';
+import terser from 'gulp-terser';
+import remoteSrc from 'gulp-remote-src';
 
 var fl_lang = false;
 var en_lang = false;
@@ -329,6 +331,49 @@ function compress() {
         .pipe(size());
 }
 
+function minifyThreeCore() {
+    return remoteSrc(['three.core.js'], {
+            base: 'https://unpkg.com/three@0.173.0/build/'
+        })
+        .pipe(terser())
+        .pipe(gulp.dest('dist/'))
+}
+
+function minifyThreeModule() {
+    return remoteSrc(['three.module.js'], {
+            base: 'https://unpkg.com/three@0.173.0/build/'
+        })
+        .pipe(replace(/\.\/three.core.js/g, function (match, p1) {
+            return './SD%2Finterface%2Fthree.core.js';
+        }))
+        .pipe(terser())
+        .pipe(gulp.dest('dist/'))
+}
+
+function minifyThreeViewport() {
+    return remoteSrc(['three-viewport-gizmo.js'], {
+            base: 'https://unpkg.com/three-viewport-gizmo@2.2.0/dist/'
+        })
+        .pipe(terser())
+        .pipe(gulp.dest('dist/'))
+}
+
+function minifyThreeOrbit() {
+    return remoteSrc(['OrbitControls.js'], {
+            base: 'https://unpkg.com/three@0.173.0/examples/jsm/controls/'
+        })
+        .pipe(terser())
+        .pipe(gulp.dest('dist/'))
+}
+
+function minifyLoader() {
+    return remoteSrc(['loader.js'], {
+            base: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/'
+        })
+        .pipe(terser())
+        .pipe(gulp.dest('dist/'))
+}
+
 gulp.task(clean);
 gulp.task(lint);
 gulp.task(copy);
@@ -342,10 +387,14 @@ gulp.task(smoosh);
 gulp.task(cleanupAfterBuild);
 gulp.task(clearlang)
 
+var debugSeries = gulp.series(clean, lint, copy, concatApp, includehtml, includehtml, replaceSVG, smoosh);
 var defaultSeries = gulp.series(clean, lint, copy, concatApp, minifyApp, includehtml, includehtml, smoosh);
-var packageSeries = gulp.series(clean, lint, copy, concatApp, includehtml, includehtml, replaceVersion, replaceSVG, clearlang, minifyApp, smoosh, compress);
-// var packageSeries = gulp.series(clean, lint, Copy, concatApp, includehtml, includehtml, replaceVersion, replaceSVG, clearlang, minifyApp, smoosh, compress, cleanupAfterBuild);
+//var packageSeries = gulp.series(clean, lint, copy, concatApp, includehtml, includehtml, replaceVersion, replaceSVG, clearlang, minifyApp, smoosh, compress);
+var packageSeries = gulp.series(clean, lint, copy, concatApp, includehtml, includehtml, replaceVersion, replaceSVG, clearlang, minifyApp, smoosh, compress, cleanupAfterBuild);
+var minifyThreeSeries = gulp.series(minifyThreeCore, minifyThreeModule, minifyThreeViewport, minifyThreeOrbit, minifyLoader);
 
 gulp.task('default', defaultSeries);
 gulp.task('package', packageSeries);
+gulp.task('debug', debugSeries);
+gulp.task('minifyThree', minifyThreeSeries);
 
